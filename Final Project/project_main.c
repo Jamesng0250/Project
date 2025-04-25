@@ -27,13 +27,13 @@ Seg7Display seg7 = { { 0, 0, 0, 0 }, true }; // display 00:00 on seg 7
 
 
 
-// The data structure for the system state
+
 typedef struct {
     bool activated;
     bool alerted;
 } SysState;
 
-// The system state
+
 static SysState sys =
 {
     false /* not activated */,
@@ -77,7 +77,7 @@ void ClockUpdate(Event *event)
                             LedTurnOnOff(true /* red */, false /* blue */, false /* green */);
 
 
-                            //Beep when timer hits 0
+                            
 
                             BuzzerOn();
                             SysCtlDelay(SysCtlClockGet() / 3 / 10);  // ~100 ms
@@ -87,7 +87,6 @@ void ClockUpdate(Event *event)
                    }
     seg7.digit[1] = timer / 10;
     seg7.digit[0] = timer % 10;
-    // Update the 7-segment
     Seg7Update(&seg7);
     // Schedule a callback event after 0.5 seconds
     EventSchedule(event, event->time + 500);
@@ -107,10 +106,7 @@ void MotionCheck(Event *event)
         uprintf("Motion detected!\r\n");
         LedTurnOnOff(false /* red */, false /* blue */, true /* green */);
         motion_count++;  // Increment only on rising edge (0 to 1)
-
-
         //buzzer beep if motion detected
-
         BuzzerOn();
         SysCtlDelay(SysCtlClockGet() / 3 / 20);  // ~50 ms
         BuzzerOff();
@@ -137,7 +133,7 @@ void CheckPushButton(Event *event)
 
     switch (code)
     {
-    case 1:                     // SW1 is pushed
+    case 1:                   
            sys.activated = true;
            timer +=5;
            press = 4;
@@ -146,7 +142,7 @@ void CheckPushButton(Event *event)
 
         break;
 
-    case 2:                     // SW2 is pushed
+    case 2:                    
 
             sys.activated = false;
             timer = 0;
@@ -163,15 +159,13 @@ void CheckPushButton(Event *event)
 
 int main(void)
 {
-    // Initialize the Tiva C LaunchPad and 7-seg
+  
     LaunchPadInit();
     MotionSensorInit();
     Seg7Init();
     BuzzerInit();
 
     uprintf("%s\n\r", "");
-
-    // Initialize the event objects
     EventInit(&check_push_button_event, CheckPushButton);
     EventInit(&motion_check_event, MotionCheck);
     EventInit(&clock_update_event, ClockUpdate);
